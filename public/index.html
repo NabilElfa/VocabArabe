@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="theme-color" content="#1a1035"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="عربي"/>
+<meta name="description" content="Apprends le vocabulaire arabe avec harakat"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icons/icon-192.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<title>عربي — Vocabulaire arabe</title>
+<style>
+:root {
+  --bg: #0f0c1e;
+  --bg2: #1a1535;
+  --bg3: #241e48;
+  --card: #1e1940;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+  --gold: #c9a84c;
+  --gold2: #e8c97a;
+  --purple: #7c6ee0;
+  --purple2: #a394f0;
+  --teal: #3ecfb2;
+  --rose: #e06e7c;
+  --text: #f0ecff;
+  --text2: #a09cc0;
+  --text3: #6a6690;
+  --green: #5ecb8a;
+  --red: #e06e7c;
+  --amber: #e8c97a;
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 16px;
+  overscroll-behavior: none;
+}
+
+/* Stars background */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 40% 8%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 30%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 82% 12%, rgba(255,255,255,0.35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 70%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 15% 75%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 80%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 35% 90%, rgba(255,255,255,0.3) 0%, transparent 100%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── LAYOUT ── */
+#app { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; }
+
+/* ── SCREENS ── */
+.screen { display: none; flex-direction: column; height: 100%; overflow: hidden; }
+.screen.active { display: flex; }
+
+/* ══ HOME SCREEN ══ */
+#home { align-items: center; justify-content: center; padding: 2rem 1.5rem; gap: 2rem; }
+.home-logo { text-align: center; }
+.home-logo .ar-title { font-family: 'Amiri', serif; font-size: 72px; color: var(--gold); line-height: 1; letter-spacing: -2px; }
+.home-logo .fr-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text2); font-style: italic; margin-top: 4px; }
+.home-logo .crescent { font-size: 32px; margin-bottom: 8px; }
+
+.home-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; width: 100%; }
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; text-align: center; }
+.stat-val { font-size: 24px; font-weight: 700; color: var(--gold2); }
+.stat-lbl { font-size: 11px; color: var(--text3); margin-top: 2px; text-transform: uppercase; letter-spacing: .5px; }
+
+.lesson-grid { width: 100%; display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+.lesson-btn {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 10px 4px; text-align: center; cursor: pointer; transition: all .15s;
+  font-family: 'Tajawal', sans-serif;
+}
+.lesson-btn.selected { background: var(--purple); border-color: var(--purple2); }
+.lesson-btn:hover { border-color: var(--border2); }
+.lesson-btn .l-num { font-size: 18px; font-weight: 700; color: var(--text); }
+.lesson-btn .l-lbl { font-size: 10px; color: var(--text3); }
+.lesson-btn.selected .l-lbl { color: rgba(255,255,255,0.7); }
+
+.home-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.btn-start {
+  width: 100%; padding: 16px; font-size: 17px; font-weight: 700;
+  background: var(--gold); color: var(--bg); border: none; border-radius: var(--radius);
+  cursor: pointer; font-family: 'Tajawal', sans-serif;
+  transition: opacity .15s, transform .1s;
+}
+.btn-start:hover { opacity: .9; }
+.btn-start:active { transform: scale(.98); }
+.btn-start.secondary {
+  background: transparent; color: var(--text2); border: 1px solid var(--border2);
+  font-size: 14px; padding: 12px;
+}
+
+/* ══ QUIZ SCREEN ══ */
+#quiz { padding: 0; }
+.quiz-header { padding: .75rem 1rem; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.btn-quit { background: none; border: none; color: var(--text3); font-size: 20px; cursor: pointer; padding: 4px; line-height: 1; }
+.lives { display: flex; gap: 4px; }
+.heart { font-size: 16px; transition: transform .2s; }
+.heart.lost { opacity: .25; }
+.quiz-progress { flex: 1; }
+.prog-bar-bg { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+.prog-bar-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--teal)); border-radius: 3px; transition: width .4s cubic-bezier(.4,0,.2,1); }
+.prog-label { font-size: 11px; color: var(--text3); text-align: right; margin-top: 3px; }
+.xp-badge { font-size: 13px; font-weight: 700; color: var(--gold); background: rgba(201,168,76,.12); padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+
+.quiz-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 1rem; }
+.quiz-scroll::-webkit-scrollbar { display: none; }
+
+.q-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: .75rem; }
+.q-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: rgba(124,110,224,.2); color: var(--purple2); display: inline-block; margin-bottom: .6rem; font-weight: 500; }
+.q-badge.verb { background: rgba(62,207,178,.15); color: var(--teal); }
+.q-fr { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: .15rem; }
+.q-hint { font-size: 12px; color: var(--text3); margin-bottom: 1rem; }
+.inp-lbl { font-size: 12px; color: var(--text2); margin-bottom: 5px; display: block; }
+.ar-inp {
+  width: 100%; font-size: 28px; text-align: right; direction: rtl;
+  font-family: 'Amiri', serif; line-height: 1.8;
+  padding: 10px 14px; border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); background: var(--bg2);
+  color: var(--text); outline: none; transition: border .15s;
+}
+.ar-inp:focus { border-color: var(--purple); }
+.q-actions { display: flex; gap: 8px; margin-top: .75rem; }
+.btn-validate {
+  flex: 1; padding: 12px; font-size: 15px; font-weight: 700;
+  background: var(--gold); color: var(--bg);
+  border: none; border-radius: var(--radius-sm); cursor: pointer;
+  font-family: 'Tajawal', sans-serif; transition: opacity .15s;
+}
+.btn-validate:hover { opacity: .9; }
+.btn-skip {
+  padding: 12px 14px; font-size: 13px; background: transparent;
+  border: 1px solid var(--border2); border-radius: var(--radius-sm);
+  cursor: pointer; color: var(--text3); font-family: 'Tajawal', sans-serif;
+}
+
+/* keyboard */
+.kbd-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: .75rem; margin-bottom: .75rem; flex-shrink: 0; }
+.kbd-section { font-size: 11px; color: var(--text3); margin-bottom: 5px; font-weight: 500; text-transform: uppercase; letter-spacing: .5px; }
+.kbd-row { display: grid; grid-template-columns: repeat(9,1fr); gap: 3px; margin-bottom: 6px; }
+.kbd-row:last-child { margin-bottom: 0; }
+.key {
+  padding: 0; height: 36px; font-size: 18px; font-family: 'Amiri', serif;
+  text-align: center; display: flex; align-items: center; justify-content: center;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 6px; cursor: pointer; color: var(--text);
+  transition: background .1s, transform .08s; user-select: none;
+}
+.key:active { transform: scale(.92); background: var(--bg2); }
+.key.hk { background: rgba(124,110,224,.15); border-color: rgba(124,110,224,.3); color: var(--purple2); }
+.key.hk:active { background: rgba(124,110,224,.3); }
+.key.util { font-size: 12px; font-family: 'Tajawal', sans-serif; color: var(--text3); }
+
+/* feedback */
+.fb { border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: .75rem; animation: slideUp .25s ease; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.fb.correct { background: rgba(94,203,138,.1); border: 1px solid rgba(94,203,138,.3); }
+.fb.partial { background: rgba(232,201,122,.1); border: 1px solid rgba(232,201,122,.3); }
+.fb.wrong { background: rgba(224,110,124,.1); border: 1px solid rgba(224,110,124,.3); }
+.fb-title { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+.fb.correct .fb-title { color: var(--green); }
+.fb.partial .fb-title { color: var(--amber); }
+.fb.wrong .fb-title { color: var(--rose); }
+.fb-answer { font-family: 'Amiri', serif; font-size: 30px; direction: rtl; text-align: right; color: var(--text); margin: 4px 0; line-height: 1.7; }
+.fb-your { font-size: 12px; color: var(--text3); margin-top: 4px; display: flex; align-items: center; gap: 6px; justify-content: flex-end; direction: rtl; }
+.fb-your span { font-family: 'Amiri', serif; font-size: 18px; color: var(--text2); }
+.diff-row { direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: 26px; line-height: 1.8; margin: 6px 0; }
+.d-ok { color: var(--green); }
+.d-bad { color: var(--rose); }
+.d-mis { color: var(--purple2); }
+.diff-legend { font-size: 11px; color: var(--text3); display: flex; gap: 10px; justify-content: flex-end; margin-top: 3px; }
+.forms-recap { margin-top: .6rem; border-top: 1px solid var(--border); padding-top: .6rem; display: flex; flex-direction: column; gap: 4px; }
+.form-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.form-lbl { color: var(--text3); }
+.form-ar { font-family: 'Amiri', serif; font-size: 18px; direction: rtl; color: var(--text2); line-height: 1.7; }
+.btn-next { width: 100%; padding: 13px; font-size: 15px; font-weight: 700; background: var(--purple); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-family: 'Tajawal', sans-serif; margin-bottom: .75rem; transition: opacity .15s; }
+.btn-next:hover { opacity: .9; }
+
+/* ══ RESULTS SCREEN ══ */
+#results { align-items: center; justify-content: center; padding: 2rem 1.5rem; gap: 1.5rem; text-align: center; }
+.results-icon { font-size: 56px; }
+.results-title { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--text); }
+.results-subtitle { font-size: 14px; color: var(--text3); }
+.results-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; width: 100%; }
+.res-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem .5rem; }
+.res-val { font-size: 28px; font-weight: 700; }
+.res-val.gold { color: var(--gold2); }
+.res-val.purple { color: var(--purple2); }
+.res-val.teal { color: var(--teal); }
+.res-lbl { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; margin-top: 3px; }
+.results-actions { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+
+/* scrollbar hidden on quiz scroll */
+.quiz-body { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ HOME ══ -->
+  <div id="home" class="screen active">
+    <div class="home-logo">
+      <div class="crescent">🌙</div>
+      <div class="ar-title">عربي</div>
+      <div class="fr-title">Vocabulaire arabe</div>
+    </div>
+
+    <div class="home-stats">
+      <div class="stat-card"><div class="stat-val" id="hs-total">0</div><div class="stat-lbl">XP total</div></div>
+      <div class="stat-card"><div class="stat-val" id="hs-streak">0</div><div class="stat-lbl">Meilleure série</div></div>
+      <div class="stat-card"><div class="stat-val" id="hs-words">0</div><div class="stat-lbl">Mots vus</div></div>
+    </div>
+
+    <div style="width:100%">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Leçons à réviser</div>
+      <div class="lesson-grid" id="lesson-grid"></div>
+    </div>
+
+    <div class="home-actions">
+      <button class="btn-start" onclick="startQuiz()">Commencer la session ✦</button>
+      <button class="btn-start secondary" onclick="showVocabList()">📖 Voir tout le vocabulaire</button>
+    </div>
+  </div>
+
+  <!-- ══ QUIZ ══ -->
+  <div id="quiz" class="screen">
+    <div class="quiz-header">
+      <button class="btn-quit" onclick="quitQuiz()" aria-label="Quitter">✕</button>
+      <div class="lives" id="lives-display"></div>
+      <div class="quiz-progress">
+        <div class="prog-bar-bg"><div class="prog-bar-fill" id="prog-fill" style="width:0%"></div></div>
+        <div class="prog-label" id="prog-label">0 / 10</div>
+      </div>
+      <div class="xp-badge" id="xp-display">✦ 0</div>
+    </div>
+
+    <div class="quiz-body">
+      <div class="quiz-scroll" id="quiz-scroll">
+        <div id="q-area"></div>
+        <div id="fb-area"></div>
+        <div id="btn-next-area"></div>
+      </div>
+      <div id="kbd-area" style="padding: 0 .75rem .75rem; flex-shrink:0;"></div>
+    </div>
+  </div>
+
+  <!-- ══ RESULTS ══ -->
+  <div id="results" class="screen">
+    <div class="results-icon" id="res-icon">🌙</div>
+    <div>
+      <div class="results-title" id="res-title">Session terminée !</div>
+      <div class="results-subtitle" id="res-sub"></div>
+    </div>
+    <div class="results-grid">
+      <div class="res-card"><div class="res-val gold" id="res-xp">0</div><div class="res-lbl">XP gagnés</div></div>
+      <div class="res-card"><div class="res-val purple" id="res-streak">0</div><div class="res-lbl">Série max</div></div>
+      <div class="res-card"><div class="res-val teal" id="res-score">0%</div><div class="res-lbl">Score</div></div>
+    </div>
+    <div class="results-actions">
+      <button class="btn-start" onclick="startQuiz()">Rejouer ✦</button>
+      <button class="btn-start secondary" onclick="showHome()">Accueil</button>
+    </div>
+  </div>
+
+  <!-- ══ VOCAB LIST ══ -->
+  <div id="vocab-list" class="screen" style="overflow-y:auto;padding:1rem">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;position:sticky;top:0;background:var(--bg);padding:.5rem 0;z-index:10">
+      <button class="btn-quit" onclick="showHome()" style="color:var(--text2)">✕</button>
+      <div style="font-size:16px;font-weight:700">Tout le vocabulaire</div>
+    </div>
+    <div id="vocab-content"></div>
+  </div>
+
+</div>
+
+<script>
+const VOCAB = [
+  {fr:"Bienvenue à toi",sg:"مَرْحَباً بِكَ",pl:null,l:1,type:"nom"},
+  {fr:"Faire connaissance",sg:"تَعَارُفٌ",pl:null,l:1,type:"nom"},
+  {fr:"Exercice",sg:"تَمْرِينٌ",pl:"تَمْرِيناتٌ",l:1,type:"nom"},
+  {fr:"Traduction",sg:"تَرْجَمَةٌ",pl:"تَرْجَمَاتٌ",l:1,type:"nom"},
+  {fr:"Question",sg:"سُؤَالٌ",pl:"أَسْئِلَةٌ",l:1,type:"nom"},
+  {fr:"Suivante",sg:"آتِيَةٌ",pl:null,l:1,type:"adj"},
+  {fr:"Réponse",sg:"إِجابَةٌ",pl:"إِجابَاتٌ",l:1,type:"nom"},
+  {fr:"Complet",sg:"كامِلٌ",pl:"كامِلونَ",l:1,type:"adj"},
+  {fr:"L'étude",sg:"دِراسةٌ",pl:"دِراساتُ",l:2,type:"nom"},
+  {fr:"Dimanche",sg:"يَومُ الأَحَدِ",pl:null,l:2,type:"nom"},
+  {fr:"Mois de jumada",sg:"جُمادَى الآخِرَةُ",pl:null,l:2,type:"nom"},
+  {fr:"Année",sg:"سَنَةٌ",pl:"سَنَواتٌ",l:2,type:"nom"},
+  {fr:"300",sg:"ثَلاثُمِائَةٍ",pl:null,l:2,type:"nom"},
+  {fr:"1000",sg:"أَلْفٌ",pl:null,l:2,type:"nom"},
+  {fr:"Faculté",sg:"كُلِّيَّةٌ",pl:"كُلِّيَّاتٌ",l:2,type:"nom"},
+  {fr:"Noble / Généreux",sg:"كَريمٌ",pl:"كِرامٌ",l:2,type:"adj"},
+  {fr:"Parole",sg:"حَديثٌ",pl:"أَحاديثُ",l:2,type:"nom"},
+  {fr:"Noble",sg:"شَريفٌ",pl:"أَشْرافٌ",l:2,type:"adj"},
+  {fr:"Prédication",sg:"دَعْوَةٌ",pl:"دَعْواتٌ",l:2,type:"nom"},
+  {fr:"Beaucoup",sg:"كَثِيرٌ",pl:"كَثِرُونَ",l:2,type:"adj"},
+  {fr:"Pays",sg:"بَلَدٌ",pl:"بِلادٌ",l:2,type:"nom"},
+  {fr:"Différent",sg:"مُخْتَلِفٌ",pl:"مُخْتَلِفونَ",l:2,type:"adj"},
+  {fr:"Science",sg:"عِلمٌ",pl:"عُلومٌ",l:2,type:"nom"},
+  {fr:"Islamique",sg:"إِسلامِيٌّ",pl:"إِسلامِيّونَ",l:2,type:"adj"},
+  {fr:"Signe",sg:"عَلامَةٌ",pl:"عَلامَاتٌ",l:2,type:"nom"},
+  {fr:"Samedi",sg:"يَومُ السَّبْتِ",pl:null,l:2,type:"nom"},
+  {fr:"Uniquement",sg:"فَقَطْ",pl:null,l:2,type:"adv"},
+  {fr:"Phrase",sg:"عِبارَةٌ",pl:"عِباراتٌ",l:2,type:"nom"},
+  {fr:"Nombreux",sg:"مُتَعَدِّدٌ",pl:null,l:2,type:"adj"},
+  {fr:"Bâtisse / Administration",sg:"عِمادَةٌ",pl:null,l:3,type:"nom"},
+  {fr:"L'accueil / Acceptation",sg:"القَبُولُ",pl:null,l:3,type:"nom"},
+  {fr:"Employé",sg:"مُوَظَّفٌ",pl:"مُوَظَّفونَ",l:3,type:"nom"},
+  {fr:"Bienvenue",sg:"أَهْلاً وَسَهْلاً",pl:null,l:3,type:"expr"},
+  {fr:"Formulaire",sg:"اِسْتِمارَةٌ",pl:"اِسْتِماراتٌ",l:3,type:"nom"},
+  {fr:"Pardon",sg:"عَفْواً",pl:null,l:3,type:"expr"},
+  {fr:"Section",sg:"قِسْمٌ",pl:"أَقْسامٌ",l:3,type:"nom"},
+  {fr:"Logement",sg:"سَكَنٌ",pl:"إِسْكانٌ",l:3,type:"nom"},
+  {fr:"Affaire / Sujet",sg:"شَأْنٌ",pl:"شُؤُونٌ",l:3,type:"nom"},
+  {fr:"Dortoir",sg:"مَهْجَعٌ",pl:"مَهاجِعٌ",l:4,type:"nom"},
+  {fr:"Le premier",sg:"الأَوَّلُ",pl:"الأَوَّلونَ",l:4,type:"adj"},
+  {fr:"Étage",sg:"دَوْرٌ",pl:"أَدْوارٌ",l:4,type:"nom"},
+  {fr:"Le deuxième",sg:"الثَّانِي",pl:null,l:4,type:"adj"},
+  {fr:"Chambre",sg:"غُرْفَةٌ",pl:"غُرَفٌ",l:4,type:"nom"},
+  {fr:"La dixième",sg:"العَاشِرَةُ",pl:null,l:4,type:"adj"},
+  {fr:"Exprime l'exclusivité",sg:"إِنَّمَا",pl:null,l:4,type:"expr"},
+  {fr:"Un seul d'entre vous",sg:"أَحَدُكُمْ",pl:null,l:4,type:"expr"},
+  {fr:"Jusqu'à ce que",sg:"حَتَّى",pl:null,l:4,type:"expr"},
+  {fr:"Authentique / Bon",sg:"صَحِيحٌ",pl:"صِحَاحٌ",l:4,type:"adj"},
+  // ── Ici tu ajouteras tes autres leçons ──
+  // Exemple verbe :
+  // {fr:"Écrire",type:"verbe",passe:"كَتَبَ",present:"يَكْتُبُ",masdar:"كِتَابَةٌ",l:5},
+];
+
+const LETTERS = ['ا','أ','إ','آ','ء','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ك','ل','م','ن','ه','و','ي','ة','ى','لا'];
+const HARAKAT = [
+  {k:'َ',d:'fatha (a)'},
+  {k:'ِ',d:'kasra (i)'},
+  {k:'ُ',d:'damma (u)'},
+  {k:'ْ',d:'sukun'},
+  {k:'ّ',d:'shadda'},
+  {k:'ً',d:'tanwin fath'},
+  {k:'ٍ',d:'tanwin kasr'},
+  {k:'ٌ',d:'tanwin damm'},
+];
+
+function strip(s){ return s ? s.replace(/[\u064B-\u065F]/g,'') : ''; }
+
+// ── STATE ──
+let state = {
+  activeLessons: new Set([1,2,3,4]),
+  xp: 0, streak: 0, lives: 3,
+  sessionXp: 0, sessionStreak: 0, sessionMax: 0,
+  qCount: 0, answered: false, curQ: null,
+  totalXp: 0, bestStreak: 0, wordsSeen: new Set(),
+};
+const TOTAL_Q = 10;
+
+// ── STORAGE ──
+function saveProgress(){
+  localStorage.setItem('arabi_xp', state.totalXp);
+  localStorage.setItem('arabi_streak', state.bestStreak);
+  localStorage.setItem('arabi_words', state.wordsSeen.size);
+}
+function loadProgress(){
+  state.totalXp = parseInt(localStorage.getItem('arabi_xp')||'0');
+  state.bestStreak = parseInt(localStorage.getItem('arabi_streak')||'0');
+  const ws = parseInt(localStorage.getItem('arabi_words')||'0');
+  state.wordsSeen = new Set(Array.from({length:ws},(_,i)=>i));
+}
+
+// ── LESSONS ──
+function getAllLessons(){
+  return [...new Set(VOCAB.map(w=>w.l))].sort((a,b)=>a-b);
+}
+function buildLessonGrid(){
+  const grid = document.getElementById('lesson-grid');
+  const lessons = getAllLessons();
+  grid.innerHTML = lessons.map(l => {
+    const count = VOCAB.filter(w=>w.l===l).length;
+    return `<button class="lesson-btn selected" id="lb-${l}" onclick="toggleLesson(${l})">
+      <div class="l-num">${l}</div>
+      <div class="l-lbl">${count} mots</div>
+    </button>`;
+  }).join('');
+}
+function toggleLesson(l){
+  if(state.activeLessons.has(l)){
+    if(state.activeLessons.size===1) return;
+    state.activeLessons.delete(l);
+    document.getElementById('lb-'+l).classList.remove('selected');
+  } else {
+    state.activeLessons.add(l);
+    document.getElementById('lb-'+l).classList.add('selected');
+  }
+}
+
+// ── SCREENS ──
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function showHome(){
+  updateHomeStats();
+  showScreen('home');
+}
+function quitQuiz(){ showHome(); }
+function showVocabList(){
+  renderVocabList();
+  showScreen('vocab-list');
+}
+
+function updateHomeStats(){
+  document.getElementById('hs-total').textContent = state.totalXp;
+  document.getElementById('hs-streak').textContent = state.bestStreak;
+  document.getElementById('hs-words').textContent = state.wordsSeen.size;
+}
+
+// ── QUIZ ──
+function startQuiz(){
+  const pool = VOCAB.filter(w=>state.activeLessons.has(w.l));
+  if(pool.length===0) return;
+  state.lives = 3;
+  state.sessionXp = 0;
+  state.sessionStreak = 0;
+  state.sessionMax = 0;
+  state.qCount = 0;
+  state.answered = false;
+  updateLives();
+  updateXP();
+  document.getElementById('prog-fill').style.width = '0%';
+  document.getElementById('prog-label').textContent = `0 / ${TOTAL_Q}`;
+  showScreen('quiz');
+  renderQ();
+}
+
+function getPool(){ return VOCAB.filter(w=>state.activeLessons.has(w.l)); }
+
+function buildQ(){
+  const pool = getPool();
+  const w = pool[Math.floor(Math.random()*pool.length)];
+  state.wordsSeen.add(w.fr);
+  if(w.type==='verbe'){
+    const forms = [
+      {key:'passe', label:'Passé', badge:'verbe — passé'},
+      {key:'present', label:'Présent', badge:'verbe — présent'},
+      {key:'masdar', label:'Nom d\'action (مصدر)', badge:'verbe — مصدر'},
+    ];
+    const f = forms[Math.floor(Math.random()*3)];
+    return { fr:w.fr, badge:f.badge, isVerb:true, target:w[f.key], word:w };
+  }
+  const usePl = w.pl && Math.random() > .45;
+  return { fr:w.fr, badge: usePl?'pluriel':'singulier', isVerb:false, target: usePl?w.pl:w.sg, word:w };
+}
+
+function renderQ(){
+  state.answered = false;
+  state.curQ = buildQ();
+  const q = state.curQ;
+  const isVerb = q.isVerb;
+  document.getElementById('q-area').innerHTML = `
+    <div class="q-card">
+      <span class="q-badge${isVerb?' verb':''}">${q.badge}</span>
+      <div class="q-fr">${q.fr}</div>
+      <div class="q-hint">Écris avec toutes les harakat</div>
+      <label class="inp-lbl">Ta réponse :</label>
+      <input class="ar-inp" id="ans" placeholder="اُكْتُبْ هُنَا" autocomplete="off"
+        onkeydown="if(event.key==='Enter')check()"/>
+      <div class="q-actions">
+        <button class="btn-skip" onclick="skip()">Passer</button>
+        <button class="btn-validate" onclick="check()">Valider →</button>
+      </div>
+    </div>`;
+  document.getElementById('fb-area').innerHTML = '';
+  document.getElementById('btn-next-area').innerHTML = '';
+  renderKbd();
+  setTimeout(()=>{ const i=document.getElementById('ans'); if(i) i.focus(); }, 80);
+  scrollTop();
+}
+
+function renderKbd(){
+  const harakatHTML = HARAKAT.map(h=>
+    `<button class="key hk" title="${h.d}" onclick="ins('${h.k}')">ا${h.k}</button>`
+  ).join('');
+  const lettersHTML = LETTERS.map(c=>
+    `<button class="key" onclick="ins('${c}')">${c}</button>`
+  ).join('');
+  document.getElementById('kbd-area').innerHTML = `
+    <div class="kbd-wrap">
+      <div class="kbd-section">Harakat</div>
+      <div class="kbd-row">${harakatHTML}<button class="key util" onclick="del()">⌫</button></div>
+      <div class="kbd-section" style="margin-top:4px">Lettres</div>
+      <div class="kbd-row">${lettersHTML}<button class="key util" onclick="clrInp()">vider</button></div>
+    </div>`;
+}
+
+function ins(c){
+  const i=document.getElementById('ans'); if(!i)return;
+  const s=i.selectionStart, e=i.selectionEnd;
+  i.value=i.value.slice(0,s)+c+i.value.slice(e);
+  i.selectionStart=i.selectionEnd=s+c.length;
+  i.focus();
+}
+function del(){
+  const i=document.getElementById('ans'); if(!i)return;
+  const s=i.selectionStart;
+  if(s>0){ i.value=i.value.slice(0,s-1)+i.value.slice(s); i.selectionStart=i.selectionEnd=s-1; }
+  i.focus();
+}
+function clrInp(){ const i=document.getElementById('ans'); if(i){i.value='';i.focus();} }
+
+function check(){
+  if(state.answered) return;
+  state.answered = true;
+  const i = document.getElementById('ans');
+  const ans = i ? i.value.trim() : '';
+  const target = state.curQ.target;
+  const letOk = strip(ans)===strip(target);
+  const fullOk = ans===target;
+  let result, pts;
+  if(fullOk){ result='correct'; pts=20; }
+  else if(letOk){ result='partial'; pts=10; }
+  else { result='wrong'; pts=0; }
+  if(result!=='wrong'){ state.sessionXp+=pts; state.sessionStreak++; state.totalXp+=pts; }
+  else { state.sessionMax=Math.max(state.sessionMax,state.sessionStreak); state.sessionStreak=0; state.lives=Math.max(0,state.lives-1); }
+  state.bestStreak=Math.max(state.bestStreak,state.sessionStreak);
+  state.qCount++;
+  saveProgress();
+  updateLives(); updateXP();
+  document.getElementById('prog-fill').style.width=Math.min(100,(state.qCount/TOTAL_Q)*100)+'%';
+  document.getElementById('prog-label').textContent=`${state.qCount} / ${TOTAL_Q}`;
+  showFb(result,ans,target,pts);
+}
+
+function buildDiff(ans,target){
+  const tc=[...target], ac=[...ans]; let out='';
+  for(let i=0;i<tc.length;i++){
+    if(ac[i]===tc[i]) out+=`<span class="d-ok">${tc[i]}</span>`;
+    else if(ac[i]) out+=`<span class="d-bad">${tc[i]}</span>`;
+    else out+=`<span class="d-mis">${tc[i]}</span>`;
+  }
+  return out;
+}
+
+function showFb(result,ans,target,pts){
+  const w = state.curQ.word;
+  const msgs = {
+    correct:`✓ Parfait ! +${pts} XP`,
+    partial:`~ Lettres ok, harakat incorrectes · +${pts} XP`,
+    wrong:`✗ Pas tout à fait…`
+  };
+  let diffHTML = '';
+  if(result!=='correct'){
+    diffHTML = `<div class="diff-row">${buildDiff(ans,target)}</div>
+    <div class="diff-legend">
+      <span><span class="d-ok">■</span> correct</span>
+      <span><span class="d-bad">■</span> incorrect</span>
+      <span><span class="d-mis">■</span> manquant</span>
+    </div>`;
+  }
+  let formsHTML = '';
+  if(w.type==='verbe'){
+    formsHTML = `<div class="forms-recap">
+      <div class="form-row"><span class="form-lbl">Passé</span><span class="form-ar">${w.passe}</span></div>
+      <div class="form-row"><span class="form-lbl">Présent</span><span class="form-ar">${w.present}</span></div>
+      <div class="form-row"><span class="form-lbl">مصدر</span><span class="form-ar">${w.masdar}</span></div>
+    </div>`;
+  } else if(w.pl){
+    formsHTML = `<div class="forms-recap">
+      <div class="form-row"><span class="form-lbl">Singulier</span><span class="form-ar">${w.sg}</span></div>
+      <div class="form-row"><span class="form-lbl">Pluriel</span><span class="form-ar">${w.pl}</span></div>
+    </div>`;
+  }
+  const yourAns = ans ? `<div class="fb-your">Ta réponse : <span>${ans}</span></div>` : '';
+  document.getElementById('fb-area').innerHTML = `
+    <div class="fb ${result}">
+      <div class="fb-title">${msgs[result]}</div>
+      <div class="fb-answer">${target}</div>
+      ${yourAns}${diffHTML}${formsHTML}
+    </div>`;
+  document.getElementById('btn-next-area').innerHTML =
+    `<button class="btn-next" onclick="next()">Question suivante →</button>`;
+  document.getElementById('kbd-area').innerHTML = '';
+  scrollTop();
+}
+
+function skip(){
+  if(state.answered) return;
+  state.answered = true;
+  state.sessionMax=Math.max(state.sessionMax,state.sessionStreak);
+  state.sessionStreak=0;
+  state.lives=Math.max(0,state.lives-1);
+  state.qCount++;
+  updateLives();
+  document.getElementById('prog-fill').style.width=Math.min(100,(state.qCount/TOTAL_Q)*100)+'%';
+  document.getElementById('prog-label').textContent=`${state.qCount} / ${TOTAL_Q}`;
+  const w=state.curQ.word;
+  let formsHTML='';
+  if(w.type==='verbe'){
+    formsHTML=`<div class="forms-recap">
+      <div class="form-row"><span class="form-lbl">Passé</span><span class="form-ar">${w.passe}</span></div>
+      <div class="form-row"><span class="form-lbl">Présent</span><span class="form-ar">${w.present}</span></div>
+      <div class="form-row"><span class="form-lbl">مصدر</span><span class="form-ar">${w.masdar}</span></div>
+    </div>`;
+  } else if(w.pl){
+    formsHTML=`<div class="forms-recap">
+      <div class="form-row"><span class="form-lbl">Singulier</span><span class="form-ar">${w.sg}</span></div>
+      <div class="form-row"><span class="form-lbl">Pluriel</span><span class="form-ar">${w.pl}</span></div>
+    </div>`;
+  }
+  document.getElementById('fb-area').innerHTML=`
+    <div class="fb wrong">
+      <div class="fb-title">Réponse correcte :</div>
+      <div class="fb-answer">${state.curQ.target}</div>${formsHTML}
+    </div>`;
+  document.getElementById('btn-next-area').innerHTML=
+    `<button class="btn-next" onclick="next()">Question suivante →</button>`;
+  document.getElementById('kbd-area').innerHTML='';
+  scrollTop();
+}
+
+function next(){
+  if(state.lives<=0){ showResults(); return; }
+  if(state.qCount>=TOTAL_Q){ showResults(); return; }
+  renderQ();
+}
+
+function showResults(){
+  const max = Math.max(state.sessionMax, state.sessionStreak);
+  const pct = Math.round((state.sessionXp/(TOTAL_Q*20))*100);
+  let icon='🌙', title='Session terminée !';
+  if(pct>=90){ icon='🌟'; title='Exceptionnel !'; }
+  else if(pct>=70){ icon='⭐'; title='Très bien !'; }
+  else if(pct>=50){ icon='✨'; title='Bien joué !'; }
+  else if(state.lives<=0){ icon='💔'; title='Plus de vies…'; }
+  document.getElementById('res-icon').textContent=icon;
+  document.getElementById('res-title').textContent=title;
+  document.getElementById('res-sub').textContent=`${state.qCount} questions · ${state.activeLessons.size} leçon(s)`;
+  document.getElementById('res-xp').textContent=state.sessionXp;
+  document.getElementById('res-streak').textContent=max;
+  document.getElementById('res-score').textContent=pct+'%';
+  showScreen('results');
+}
+
+function updateLives(){
+  document.getElementById('lives-display').innerHTML =
+    [1,2,3].map(n=>`<span class="heart${n>state.lives?' lost':''}">♥</span>`).join('');
+}
+function updateXP(){
+  document.getElementById('xp-display').textContent=`✦ ${state.sessionXp}`;
+}
+function scrollTop(){
+  setTimeout(()=>{ document.getElementById('quiz-scroll').scrollTo({top:0,behavior:'smooth'}); },50);
+}
+
+// ── VOCAB LIST ──
+function renderVocabList(){
+  const lessons = getAllLessons();
+  let html = '';
+  for(const l of lessons){
+    if(!state.activeLessons.has(l) && false) continue;
+    const words = VOCAB.filter(w=>w.l===l);
+    html += `<div style="margin-bottom:1.5rem">
+      <div style="font-size:13px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.5rem">Leçon ${l}</div>
+      ${words.map(w=>{
+        if(w.type==='verbe'){
+          return `<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem;margin-bottom:6px">
+            <div style="font-size:14px;color:var(--text2);margin-bottom:6px">${w.fr} <span style="font-size:11px;padding:2px 6px;background:rgba(62,207,178,.15);color:var(--teal);border-radius:10px">verbe</span></div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+              <div style="text-align:center"><div style="font-size:10px;color:var(--text3)">Passé</div><div style="font-family:'Amiri',serif;font-size:18px;color:var(--text);direction:rtl;line-height:1.7">${w.passe}</div></div>
+              <div style="text-align:center"><div style="font-size:10px;color:var(--text3)">Présent</div><div style="font-family:'Amiri',serif;font-size:18px;color:var(--text);direction:rtl;line-height:1.7">${w.present}</div></div>
+              <div style="text-align:center"><div style="font-size:10px;color:var(--text3)">مصدر</div><div style="font-family:'Amiri',serif;font-size:18px;color:var(--text);direction:rtl;line-height:1.7">${w.masdar}</div></div>
+            </div>
+          </div>`;
+        }
+        return `<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem 1rem;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:14px;color:var(--text2)">${w.fr}</span>
+          <div style="text-align:right">
+            <div style="font-family:'Amiri',serif;font-size:20px;direction:rtl;color:var(--text);line-height:1.7">${w.sg}</div>
+            ${w.pl?`<div style="font-family:'Amiri',serif;font-size:14px;direction:rtl;color:var(--text3);line-height:1.5">${w.pl}</div>`:''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+  document.getElementById('vocab-content').innerHTML=html;
+}
+
+// ── INIT ──
+loadProgress();
+buildLessonGrid();
+updateHomeStats();
+</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
+</body>
+</html>
